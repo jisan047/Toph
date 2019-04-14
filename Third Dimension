@@ -1,0 +1,81 @@
+/**********************************************************************\
+|           _______  _     _____    ____   ___     _                   |
+|          |___   _|(_)   / ___/   / _  | |   \   | |                  |
+|              | |  | |  / /___   / /_| | | |\ \  | |                  |
+|           _  | |  | | /___  /  /  __  | | | \ \ | |                  |
+|           \ \| |  | | ___/ /  / /   | | | |  \ \| |                  |
+|            \___/  |_|/____/  /_/    |_| |_|   \___|                  |
+|                  Computer Science and Engineering                    |
+|  Bangabandhu Sheikh Mujibur Rahman Science and Technology University |
+|         devskill:jisancse||uva:jishan047||github:jisan047            |
+\**********************************************************************/
+
+                /********************\
+                |                    |
+                |    lets try.....   |
+                |                    |
+                \********************/
+
+#include<bits/stdc++.h>
+using namespace std;
+
+///pre-processing
+#define     gcd(a, b)       __gcd(a,b)
+#define     lcm(a, b)       (a * b) / gcd(a, b)
+#define     loop(i, n)      for(int i=0;i<n;i++)
+#define     all(x)          x.begin(),x.end()
+#define     mem(a, x)       memset(a,x,sizeof a)
+#define     endl            '\n'
+#define     ss              second
+#define     ff              first
+#define     TN              typename
+
+///input functions
+int Int(){int x;scanf("%d",&x);return x;}
+long long Long(){long long x;scanf("%lld",&x);return x;}
+double Double(){double x;scanf("%lf",&x);return x;}
+
+///input functions shorting
+#define Int Int()
+#define Long Long()
+#define Double Double()
+#define Float Float()
+
+///Constants
+const int N = (int) 1e5 + 5;
+const long long MOD = (int) 1e9 + 7;
+//Trying to do something.
+//()()()()()()()()() ..... ()()()()()()()()()()()()
+//~~~~~~~~~~~~~~~~~~~~~~Get Ready~~~~~~~~~~~~~~~~~~~~~
+
+///debugger
+
+///end
+
+// loading..................
+int dp[10][10][10];
+int x, y, z;
+int solution(int i, int j, int k){
+    if(dp[i][j][k] != -1) return dp[i][j][k];
+    if(i == x and j == y and k == z)return dp[i][j][k] = 1;
+    int a = 0, b = 0, c = 0;
+    if(i + 1 <= x)
+        a = solution(i + 1, j, k);
+    if(j + 1 <= y)
+        b = solution(i, j + 1, k);
+    if(k + 1 <= z)
+        c = solution(i, j, k + 1);
+    return dp[i][j][k] = a + b + c;
+}
+
+int main()
+{
+    //freopen("input.txt","r",stdin);
+    int t = Int, cs = 0;
+    while(t--){
+        memset(dp, -1, sizeof dp);
+        x = Int, y = Int, z = Int;
+        printf("Case #%d: %d\n", ++cs, solution(0, 0, 0));
+    }
+    return 0;
+}
