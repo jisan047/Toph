@@ -1,0 +1,178 @@
+/**********************************************************************\
+|           _______  _     _____    ____   ___     _                   |
+|          |___   _|(_)   / ___/   / _  | |   \   | |                  |
+|              | |  | |  / /___   / /_| | | |\ \  | |                  |
+|           _  | |  | | /___  /  /  __  | | | \ \ | |                  |
+|           \ \| |  | | ___/ /  / /   | | | |  \ \| |                  |
+|            \___/  |_|/____/  /_/    |_| |_|   \___|                  |
+|                  Computer Science and Engineering                    |
+|  Bangabandhu Sheikh Mujibur Rahman Science and Technology University |
+|         devskill:jisancse||uva:jishan047||github:jisan047            |
+\**********************************************************************/
+
+                /********************\
+                |                    |
+                |    lets try.....   |
+                |                    |
+                \********************/
+
+#include<bits/stdc++.h>
+using namespace std;
+
+///pre-processing
+#define     gcd(a, b)       __gcd(a,b)
+#define     lcm(a, b)       (a * b) / gcd(a, b)
+#define     loop(i, n)      for(int i=0;i<n;i++)
+#define     all(x)          x.begin(),x.end()
+#define     mem(a, x)       memset(a,x,sizeof a)
+#define     endl            '\n'
+#define     ss              second
+#define     ff              first
+#define     TN              typename
+
+///input functions
+int Int(){int x;scanf("%d",&x);return x;}
+long long Long(){long long x;scanf("%lld",&x);return x;}
+double Double(){double x;scanf("%lf",&x);return x;}
+
+///input functions shorting
+#define Int Int()
+#define Long Long()
+#define Double Double()
+#define Float Float()
+
+///Constants
+const int N = (int) 1e5 + 5;
+const long long MOD = (long long) 1e9 + 7;
+
+///BitMask
+int Set(int a, int x){return (a |= (1 << x));}
+int Reset(int a, int x){return (a &= ~(1 << x));}
+bool Isset(int a, int x){return (bool) (a & (1 << x));}
+
+//Trying to do something.
+//()()()()()()()()() ..... ()()()()()()()()()()()()
+//~~~~~~~~~~~~~~~~~~~~~~Get Ready~~~~~~~~~~~~~~~~~~~~~
+
+///debugger
+
+///end
+
+// loading..................
+long long bigmod (long long a, long long p, long long m){
+    long long res = 1LL;
+    long long x = a;  
+    while(p){
+        if (p & 1LL){
+            res = (res * x) % m;
+        }
+        x = (x * x) % m;
+        p = p >> 1LL;
+    }
+    return res;
+}
+
+long long invMod2;
+
+long long sum(long long n){
+    return (((n * (n - 1LL))) * invMod2) % MOD;
+}
+
+long long tree[N << 2], tree1[N << 2], arr[N], prop[N << 2];
+void propagate(int at, int l, int r){
+    if(prop[at]){
+        tree[at] += (prop[at] * (r - l + 1LL));
+        tree[at] %= MOD;
+        tree1[at] += (prop[at] * (sum(r + 1LL) - sum(l * 1LL))) % MOD;
+        tree1[at] %= MOD;
+        if(l != r){
+            prop[at << 1] = (prop[at] + prop[at << 1]) % MOD;
+            prop[(at << 1) | 1] = (prop[at] + prop[(at << 1) | 1])  % MOD;  
+        }
+        prop[at] = 0LL;
+    }
+}
+
+void build(int at, int l, int r){
+    if(l == r){
+        tree[at] = arr[l];
+        tree1[at] = (l * arr[l]) % MOD;
+        return ;
+    }
+    int mid = (l + r) >> 1;
+    build(at << 1, l, mid);
+    build((at << 1) | 1, mid + 1, r);
+    tree[at] = (tree[at << 1] + tree[(at << 1) | 1]) % MOD;
+    tree1[at] = (tree1[at << 1] + tree1[(at << 1) | 1]) % MOD;
+}
+
+void update(int at, int l , int r, int L, int R, long long v){
+    propagate(at, l, r);
+    if(l > R or r < L) return;
+    if(l >= L and r <= R){
+        prop[at] += v;
+        propagate(at, l, r);
+        return ;
+    }
+    int mid = (l + r) >> 1;
+    update(at << 1, l , mid, L, R, v);
+    update((at << 1) | 1, mid + 1, r, L, R, v);
+    tree[at] = (tree[at << 1] + tree[(at << 1) | 1]) % MOD;
+    tree1[at] = (tree1[at << 1] + tree1[(at << 1) | 1]) % MOD;
+}
+
+long long query(int at, int l, int r, int L, int R){
+    propagate(at , l, r);
+    if(l > R or r < L) return 0LL;
+    if(l >= L and r <= R){
+        propagate(at, l, r);
+        return tree[at];
+    }
+    int mid = (l + r) >> 1;
+    return (query(at << 1, l, mid, L, R) + query((at << 1) | 1, mid + 1, r, L, R)) % MOD;
+}
+
+long long query1(int at, int l, int r, int L, int R){
+    propagate(at, l, r);
+    if(l > R or r < L) return 0LL;
+    if(l >= L and r <= R){
+        propagate(at, l, r);
+        return tree1[at];
+    }
+    int mid = (l + r) >> 1;
+    return (query1(at << 1, l, mid, L, R) + query1((at << 1) | 1, mid + 1, r, L, R)) % MOD;
+}
+
+int main(){
+    int t = Int, cs = 0;
+    invMod2 = (bigmod(2LL, MOD - 2LL, MOD) % MOD);
+    while(t--){
+        for(int i = 0; i < (N << 2); i++){
+            tree[i] = tree1[i] = prop[i] = 0LL;
+        }
+        int n = Int, q = Int;
+        for(int i = 1; i <= n; i++){
+            arr[i] = Long;
+        }
+        build(1, 1, n);
+        printf("Case %d:\n", ++cs);
+        while(q--){
+            int type = Int;
+            int l = Int, r = Int;
+            long long x = Long;
+            if(type == 1)update(1, 1, n, l, r, x);
+            else{
+                long long ans = query(1, 1, n, l, r);
+                long long ans1 = 0LL;
+                if(l < r){
+                    ans1 = (query1(1, 1, n, l + 1, r) - ((l * query(1, 1, n, l + 1, r)) % MOD)) % MOD;
+                    if(ans1 < 0)ans1 += MOD;
+                    ans1 *= x;
+                    ans1 %= MOD;
+                }
+                cout << (ans + ans1) % MOD << endl;
+            }
+        }
+    }
+    return 0;
+}
